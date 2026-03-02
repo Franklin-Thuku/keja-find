@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom'; // Add this line
 import axios from 'axios';
 import { CheckCircle, MapPin, MessageSquare, ArrowRight } from 'lucide-react';
 import './index.css';
@@ -9,7 +10,9 @@ const Navbar = () => (
     <div className="container mx-auto flex justify-between items-center px-6 md:px-12">
       <h1 className="text-2xl font-bold text-indigo-600 tracking-tight">Keja Find</h1>
       <div className="space-x-4">
-        <button className="text-slate-600 font-medium hover:text-indigo-600 transition">Sign In</button>
+        <Link to="/login" className="text-slate-600 font-medium hover:text-indigo-600">
+            Sign In
+        </Link>
         <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-lg shadow-indigo-200">
           Join as Landlord
         </button>
@@ -47,10 +50,9 @@ function App() {
           <p className="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
             The only platform specialized for Kenyatta Road, Highpoint, and Juja. No more fake photos or ghost landlords.
           </p>
-          <button className="group bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-lg transition-all flex items-center gap-2 mx-auto shadow-2xl shadow-indigo-300">
-            Get Started 
-            <ArrowRight className="group-hover:translate-x-1 transition-transform" />
-          </button>
+          <Link to="/signup" className="bg-indigo-600 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl shadow-indigo-300">
+            Get Started
+          </Link>
           
           <div className="mt-16 flex flex-wrap justify-center items-center gap-8 opacity-50 grayscale">
              <span className="font-bold text-xl">500+ Users Trusted Us</span>
