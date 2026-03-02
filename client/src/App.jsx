@@ -37,11 +37,11 @@ function App() {
           <h2 className="text-4xl md:text-6xl font-bold mb-6">Find Your Next Home in Juja</h2>
           <p className="text-indigo-100 mb-8 text-lg">Searching Kenyatta Road, Highpoint, and Kalimoni...</p>
           <div className="max-w-2xl mx-auto">
-            <input 
+           <input 
               type="text" 
-              placeholder="Search by neighborhood..." 
-              className="w-full p-4 rounded-2xl text-gray-900 shadow-2xl focus:ring-4 focus:ring-indigo-400 outline-none"
-            />
+              placeholder="Search Kenyatta Road, Highpoint..." 
+              className="w-full p-4 rounded-2xl text-gray-900 bg-white/90 backdrop-blur-sm placeholder:text-gray-500 shadow-2xl focus:ring-4 focus:ring-indigo-300 outline-none transition-all"
+           />
           </div>
         </div>
       </div>
