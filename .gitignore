@@ -1,0 +1,14 @@
+﻿# Dependency folders
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Environment variables (Secrets!)
+.env
+
+# Build folders
+dist/
+client/dist/
+
+# Local uploads
+server/uploads/
