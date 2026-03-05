@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient'; 
-import { useNavigate } from 'react-router-dom'; // The proper way to move between pages
+import { useNavigate, useLocation } from 'react-router-dom'; 
 import { LogIn, UserPlus } from 'lucide-react'; 
 
-// We add 'initialMode' as a prop so your Landing Page buttons can control it
 const AuthModal = ({ initialMode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
   const [email, setEmail] = useState('');
@@ -11,9 +10,9 @@ const AuthModal = ({ initialMode = 'login' }) => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   
-  const navigate = useNavigate(); // Initialize the navigator
+  const navigate = useNavigate();
+  const location = useLocation(); // Used to catch the ?role=landlord from the URL
 
-  // This ensures that if the prop changes, the modal updates
   useEffect(() => {
     setIsLogin(initialMode === 'login');
   }, [initialMode]);
@@ -23,7 +22,11 @@ const AuthModal = ({ initialMode = 'login' }) => {
     setLoading(true);
     setError(null);
 
-    // 1. Send data to Supabase
+    // 1. Identify the role from the URL (default to 'student' if not found)
+    const params = new URLSearchParams(location.search);
+    const userRole = params.get('role') || 'student';
+
+    // 2. Perform Supabase Auth
     const { data, error: authError } = isLogin 
       ? await supabase.auth.signInWithPassword({ email, password })
       : await supabase.auth.signUp({ email, password });
@@ -32,18 +35,30 @@ const AuthModal = ({ initialMode = 'login' }) => {
       setError(authError.message);
       setLoading(false);
     } else {
-      // 2. Logic for redirection
-      if (isLogin) {
-        // User is logged in, move to Dashboard
+      
+      if (!isLogin && data?.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .insert([
+            { 
+              id: data.user.id, 
+              email: email, 
+              role: userRole 
+            }
+          ]);
+
+        if (profileError) {
+          console.error("Profile Error:", profileError.message);
+        }
+      }
+
+      // 4. Handle Redirection
+      if (isLogin || !data?.user?.identities?.length === 0) {
         navigate("/dashboard"); 
       } else {
-        // New user created! 
-        // Note: By default, Supabase requires email confirmation.
-        // If you've disabled "Email Confirmation" in Supabase settings, 
-        // you can navigate("/") or navigate("/dashboard") immediately.
         alert("Account created! Check your email to verify before logging in.");
         setLoading(false);
-        setIsLogin(true); // Switch to login view so they can sign in after verifying
+        setIsLogin(true); 
       }
     }
   };
@@ -61,7 +76,10 @@ const AuthModal = ({ initialMode = 'login' }) => {
   return (
     <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
       <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
-        {isLogin ? 'Welcome Back' : 'Create Account'}
+       
+        {new URLSearchParams(location.search).get('role') === 'landlord' && !isLogin 
+          ? 'Landlord Signup' 
+          : (isLogin ? 'Welcome Back' : 'Create Account')}
       </h2>
       
       <form onSubmit={handleAuth} className="space-y-4">
@@ -95,6 +113,7 @@ const AuthModal = ({ initialMode = 'login' }) => {
         </div>
 
         <button 
+          type="button"
           onClick={handleGoogleAuth}
           className="w-full border border-slate-200 p-4 rounded-xl flex items-center justify-center gap-3 hover:bg-slate-50 transition font-medium"
         >

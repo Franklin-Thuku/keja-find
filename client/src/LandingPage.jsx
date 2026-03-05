@@ -13,9 +13,12 @@ const Navbar = () => (
         <Link to="/login" className="text-slate-600 font-medium hover:text-indigo-600">
             Sign In
         </Link>
-        <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-full font-medium transition shadow-lg shadow-indigo-200">
-          Join as Landlord
-        </button>
+        <Link 
+            to="/signup?role=landlord" 
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold text-lg shadow-2xl shadow-indigo-300 transition-all hover:scale-105"
+        >
+            Join as Landlord
+        </Link>
       </div>
     </div>
   </nav>
