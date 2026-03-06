@@ -57,9 +57,9 @@ const HouseDetailsModal = ({ isOpen, onClose, house }) => {
                 </button>
 
                 {/* Image Section */}
-                <div className="w-full md:w-1/2 h-64 md:h-auto relative bg-gray-100">
+                <div className="w-full md:w-1/2 h-56 sm:h-64 md:h-auto relative bg-gray-100">
                     <img
-                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://localhost:5000${house.image_url}`) : 'https://via.placeholder.com/600'}
+                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://192.168.0.103:5000${house.image_url}`) : 'https://via.placeholder.com/600'}
                         alt={house.house_type || house.title}
                         className="w-full h-full object-cover"
                     />
@@ -72,13 +72,13 @@ const HouseDetailsModal = ({ isOpen, onClose, house }) => {
                 </div>
 
                 {/* Content Section */}
-                <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col bg-slate-50/50">
+                <div className="w-full md:w-1/2 p-4 sm:p-6 md:p-10 flex flex-col bg-slate-50/50">
 
                     <div className="hidden md:inline-block bg-indigo-50 border border-indigo-100 px-4 py-2 rounded-2xl text-xl font-bold text-indigo-600 w-max mb-6">
                         KSh {house.price.toLocaleString()} / month
                     </div>
 
-                    <h2 className="text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
                         {house.house_type || house.title}
                     </h2>
 
@@ -142,9 +142,9 @@ const HouseDetailsModal = ({ isOpen, onClose, house }) => {
                                 }
                             }}
                             disabled={contacting}
-                            className="w-full bg-[#25D366] hover:bg-[#20b858] text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-75"
+                            className="w-full bg-[#25D366] hover:bg-[#20b858] text-white py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-75"
                         >
-                            <MessageCircle size={24} />
+                            <MessageCircle size={24} className="w-5 h-5 sm:w-6 sm:h-6" />
                             {contacting ? "Connecting..." : "WhatsApp Landlord"}
                         </button>
                     </div>

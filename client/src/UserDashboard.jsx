@@ -10,7 +10,7 @@ function UserDashboard() {
 
     useEffect(() => {
         // Fetching from your Node server
-        axios.get('http://localhost:5000/api/houses')
+        axios.get('http://192.168.0.103:5000/api/houses')
             .then((res) => {
                 setHouses(res.data);
                 setLoading(false);
@@ -32,15 +32,15 @@ function UserDashboard() {
             </nav>
 
             {/* Hero Section */}
-            <div className="relative pt-32 pb-20 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white">
+            <div className="relative pt-24 pb-12 md:pt-32 md:pb-20 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl md:text-6xl font-bold mb-6">Find Your Next Home in Juja</h2>
-                    <p className="text-indigo-100 mb-8 text-lg">Searching Kenyatta Road, Highpoint, and Kalimoni...</p>
+                    <h2 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 leading-tight">Find Your Next Home in Juja</h2>
+                    <p className="text-indigo-100 mb-6 md:mb-8 text-sm md:text-lg px-2">Searching Kenyatta Road, Highpoint, and Kalimoni...</p>
                     <div className="max-w-2xl mx-auto">
                         <input
                             type="text"
                             placeholder="Search Kenyatta Road, Highpoint..."
-                            className="w-full p-4 rounded-2xl text-gray-900 bg-white/90 backdrop-blur-sm placeholder:text-gray-500 shadow-2xl focus:ring-4 focus:ring-indigo-300 outline-none transition-all"
+                            className="w-full p-3 md:p-4 rounded-xl md:rounded-2xl text-base md:text-lg text-gray-900 bg-white/90 backdrop-blur-sm placeholder:text-gray-500 shadow-2xl focus:ring-4 focus:ring-indigo-300 outline-none transition-all"
                         />
                     </div>
                 </div>
@@ -62,7 +62,7 @@ function UserDashboard() {
                             <div key={house.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
                                 <div className="relative h-56 overflow-hidden">
                                     <img
-                                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://localhost:5000${house.image_url}`) : 'https://via.placeholder.com/400'}
+                                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://192.168.0.103:5000${house.image_url}`) : 'https://via.placeholder.com/400'}
                                         alt={house.house_type || house.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />

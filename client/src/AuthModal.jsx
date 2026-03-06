@@ -66,8 +66,8 @@ const AuthModal = ({ initialMode = 'login' }) => {
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
-      <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
+    <div className="bg-white/80 backdrop-blur-xl p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-6 text-center">
 
         {new URLSearchParams(location.search).get('role') === 'landlord' && !isLogin
           ? 'Landlord Signup'

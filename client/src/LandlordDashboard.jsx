@@ -34,7 +34,7 @@ function LandlordDashboard() {
                     }
 
                     // 2. Fetch Houses
-                    axios.get('http://localhost:5000/api/houses')
+                    axios.get('http://192.168.0.103:5000/api/houses')
                         .then((res) => {
                             // Filter logic updated to ONLY show houses owned by this user
                             const myHouses = res.data.filter(h => h.landlord_id === user.id);
@@ -77,19 +77,19 @@ function LandlordDashboard() {
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
             {/* Navbar with Glassmorphism */}
-            <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4">
-                <div className="container mx-auto flex justify-between items-center px-6 md:px-12">
-                    <h1 className="text-2xl font-extrabold text-indigo-600 tracking-tight">Keja Find</h1>
-                    <div className="flex items-center gap-2 md:gap-4">
-                        <span className="text-gray-600 font-medium hidden md:inline">Landlord Portal</span>
+            <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-3 md:py-4">
+                <div className="container mx-auto flex justify-between items-center px-4 md:px-12">
+                    <h1 className="text-xl md:text-2xl font-extrabold text-indigo-600 tracking-tight">Keja Find</h1>
+                    <div className="flex items-center gap-2 md:gap-4 shrink-0">
+                        <span className="text-gray-600 font-medium hidden lg:inline">Landlord Portal</span>
                         <button
                             onClick={() => setIsPhoneModalOpen(true)}
-                            className="bg-green-100 hover:bg-green-200 text-green-700 font-bold py-2 px-4 rounded-full transition-all border border-green-200 text-sm md:text-base hidden sm:block">
+                            className="bg-green-100 hover:bg-green-200 text-green-700 font-bold py-2 px-3 md:px-4 rounded-xl md:rounded-full transition-all border border-green-200 text-xs md:text-base hidden sm:block">
                             {phoneNumber ? 'Update WhatsApp' : 'Add WhatsApp'}
                         </button>
                         <button
                             onClick={() => setIsUploadModalOpen(true)}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-5 rounded-full transition-all shadow-lg shadow-indigo-200">
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 md:px-5 rounded-xl md:rounded-full transition-all shadow-lg shadow-indigo-200 text-sm md:text-base hidden sm:block whitespace-nowrap">
                             List Your Keja
                         </button>
                     </div>
@@ -99,18 +99,18 @@ function LandlordDashboard() {
             {/* Missing Phone Number Alert Banner */}
             {!loading && !phoneNumber && (
                 <div className="pt-24 pb-2 px-4">
-                    <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-200 p-4 rounded-2xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 bg-amber-100 rounded-lg text-amber-600">
+                    <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-200 p-4 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4 gap-4 sm:gap-2">
+                        <div className="flex items-start sm:items-center gap-3">
+                            <div className="p-2 bg-amber-100 rounded-lg text-amber-600 shrink-0">
                                 <AlertCircle size={20} />
                             </div>
-                            <p className="text-amber-800 font-medium">
-                                <span className="font-bold">Missing Info:</span> Please add your WhatsApp number so students can contact you!
+                            <p className="text-amber-800 font-medium text-sm md:text-base">
+                                <span className="font-bold block sm:inline">Missing Info:</span> Please add your WhatsApp number so students can contact you!
                             </p>
                         </div>
                         <button
                             onClick={() => setIsPhoneModalOpen(true)}
-                            className="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-2 px-4 rounded-xl transition text-sm whitespace-nowrap"
+                            className="w-full sm:w-auto bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-2 px-4 rounded-xl transition text-sm whitespace-nowrap shrink-0"
                         >
                             Setup Now
                         </button>
@@ -119,22 +119,22 @@ function LandlordDashboard() {
             )}
 
             {/* Hero Section - Simplified for Landlords */}
-            <div className="relative pt-32 pb-12 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white">
+            <div className="relative pt-24 pb-12 md:pt-32 md:pb-12 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white">
                 <div className="container mx-auto px-6 text-center">
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4">Manage Your Listings</h2>
-                    <p className="text-indigo-100 text-lg max-w-2xl mx-auto">
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4">Manage Your Listings</h2>
+                    <p className="text-indigo-100 text-base md:text-lg max-w-2xl mx-auto px-2">
                         View your active properties and attract more students in Juja.
                     </p>
                 </div>
             </div>
 
             {/* Property Grid */}
-            <main className="container mx-auto px-6 py-16">
-                <div className="flex justify-between items-center mb-8">
-                    <h3 className="text-2xl font-bold text-gray-800">Your Properties</h3>
+            <main className="container mx-auto px-4 md:px-6 py-12 md:py-16">
+                <div className="flex justify-between items-center mb-6 md:mb-8">
+                    <h3 className="text-xl md:text-2xl font-bold text-gray-800">Your Properties</h3>
                     <button
                         onClick={() => setIsUploadModalOpen(true)}
-                        className="md:hidden bg-indigo-100 text-indigo-700 font-bold py-2 px-4 rounded-xl text-sm"
+                        className="md:hidden bg-indigo-100 text-indigo-700 font-bold py-2 px-4 rounded-xl text-sm whitespace-nowrap"
                     >
                         + Add New
                     </button>
@@ -152,7 +152,7 @@ function LandlordDashboard() {
                             <div key={house.id} className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all border border-gray-100">
                                 <div className="relative h-56 overflow-hidden">
                                     <img
-                                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://localhost:5000${house.image_url}`) : 'https://via.placeholder.com/400'}
+                                        src={house.image_url ? (house.image_url.startsWith('http') ? house.image_url : `http://192.168.0.103:5000${house.image_url}`) : 'https://via.placeholder.com/400'}
                                         alt={house.house_type || house.title}
                                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                     />

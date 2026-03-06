@@ -39,7 +39,7 @@ const PhoneUpdateModal = ({ isOpen, onClose, currentPhone, onUpdateSuccess }) =>
 
     return (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl relative my-auto animate-in fade-in zoom-in duration-300 border border-white/20 p-8">
+            <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl relative my-auto animate-in fade-in zoom-in duration-300 border border-white/20 p-6 sm:p-8">
 
                 <button
                     onClick={onClose}
@@ -48,12 +48,12 @@ const PhoneUpdateModal = ({ isOpen, onClose, currentPhone, onUpdateSuccess }) =>
                     <X size={20} />
                 </button>
 
-                <div className="mb-8 text-center">
-                    <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Phone size={32} />
+                <div className="mb-6 sm:mb-8 text-center">
+                    <div className="w-14 h-14 sm:w-16 sm:h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Phone size={28} className="sm:w-8 sm:h-8" />
                     </div>
-                    <h2 className="text-2xl font-bold text-gray-900">Update WhatsApp</h2>
-                    <p className="text-gray-500 text-sm mt-2">Enter your active WhatsApp number so students can easily reach out regarding your Kejas.</p>
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Update WhatsApp</h2>
+                    <p className="text-gray-500 text-xs sm:text-sm mt-2 px-2">Enter your active WhatsApp number so students can easily reach out regarding your Kejas.</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-6">
