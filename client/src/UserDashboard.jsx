@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './index.css';
+import HouseDetailsModal from './HouseDetailsModal';
 
 function UserDashboard() {
     const [houses, setHouses] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [selectedHouse, setSelectedHouse] = useState(null);
 
     useEffect(() => {
         // Fetching from your Node server
@@ -73,7 +75,10 @@ function UserDashboard() {
                                     <p className="text-gray-500 flex items-center gap-2 mb-4">
                                         <span className="text-indigo-500">📍</span> {house.location_description || house.location}
                                     </p>
-                                    <button className="w-full py-3 bg-slate-100 hover:bg-indigo-600 hover:text-white text-gray-700 font-semibold rounded-xl transition-colors">
+                                    <button
+                                        onClick={() => setSelectedHouse(house)}
+                                        className="w-full py-3 bg-slate-100 hover:bg-indigo-600 hover:text-white text-gray-700 font-semibold rounded-xl transition-colors"
+                                    >
                                         View Details
                                     </button>
                                 </div>
@@ -82,6 +87,12 @@ function UserDashboard() {
                     </div>
                 )}
             </main>
+
+            <HouseDetailsModal
+                isOpen={!!selectedHouse}
+                onClose={() => setSelectedHouse(null)}
+                house={selectedHouse}
+            />
         </div>
     );
 }

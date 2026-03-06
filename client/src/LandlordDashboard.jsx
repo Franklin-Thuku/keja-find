@@ -43,6 +43,25 @@ function LandlordDashboard() {
         fetchLandlordHouses();
     }, []);
 
+    const handleRemove = async (houseId) => {
+        if (!window.confirm("Are you sure you want to delete this property?")) return;
+
+        try {
+            const { error } = await supabase
+                .from('houses')
+                .delete()
+                .eq('id', houseId);
+
+            if (error) throw error;
+
+            // Immediately update the UI without reloading
+            setHouses((prevHouses) => prevHouses.filter((house) => house.id !== houseId));
+        } catch (error) {
+            console.error("Error deleting house:", error);
+            alert("Failed to delete property.");
+        }
+    };
+
     return (
         <div className="min-h-screen bg-gray-50 font-sans">
             {/* Navbar with Glassmorphism */}
@@ -114,7 +133,10 @@ function LandlordDashboard() {
                                         <button className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-gray-700 font-semibold rounded-xl transition-colors">
                                             Edit
                                         </button>
-                                        <button className="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition-colors">
+                                        <button
+                                            onClick={() => handleRemove(house.id)}
+                                            className="flex-1 py-3 bg-red-50 hover:bg-red-100 text-red-600 font-semibold rounded-xl transition-colors"
+                                        >
                                             Remove
                                         </button>
                                     </div>
