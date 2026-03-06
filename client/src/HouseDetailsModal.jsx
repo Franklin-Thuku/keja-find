@@ -1,7 +1,10 @@
-import React from 'react';
-import { X, MapPin, CheckCircle, Wifi, Droplets, Shield, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, MapPin, CheckCircle, Wifi, Droplets, Shield, Zap, MessageCircle } from 'lucide-react';
+import { supabase } from './supabaseClient';
 
 const HouseDetailsModal = ({ isOpen, onClose, house }) => {
+    const [contacting, setContacting] = useState(false);
+
     if (!isOpen || !house) return null;
 
     // Basic utility to map amenities strings to icons
@@ -105,8 +108,44 @@ const HouseDetailsModal = ({ isOpen, onClose, house }) => {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-slate-200">
-                        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-xl shadow-indigo-200 hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
-                            Contact Landlord
+                        <button
+                            onClick={async () => {
+                                setContacting(true);
+                                try {
+                                    const { data, error } = await supabase
+                                        .from('profiles')
+                                        .select('phone_number')
+                                        .eq('id', house.landlord_id)
+                                        .maybeSingle();
+
+                                    if (error || !data || !data.phone_number) {
+                                        alert("Landlord's phone number is unavailable.");
+                                        return;
+                                    }
+
+                                    // Format phone number (ensure international format for WhatsApp)
+                                    let formattedPhone = data.phone_number.trim();
+                                    // simple naive formatting assumption (stripping leading 0 and adding 254)
+                                    if (formattedPhone.startsWith('0')) {
+                                        formattedPhone = '254' + formattedPhone.slice(1);
+                                    }
+
+                                    const houseName = house.house_type || house.title || 'the property';
+                                    const message = encodeURIComponent(`Hi, I'm interested in ${houseName} listed on Keja Find for KSh ${house.price.toLocaleString()}. Is it still available?`);
+
+                                    window.open(`https://wa.me/${formattedPhone}?text=${message}`, '_blank');
+                                } catch (err) {
+                                    console.error("Error contacting landlord:", err);
+                                    alert("Something went wrong while trying to contact landlord.");
+                                } finally {
+                                    setContacting(false);
+                                }
+                            }}
+                            disabled={contacting}
+                            className="w-full bg-[#25D366] hover:bg-[#20b858] text-white py-4 rounded-2xl font-bold text-lg transition-all shadow-xl hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 disabled:opacity-75"
+                        >
+                            <MessageCircle size={24} />
+                            {contacting ? "Connecting..." : "WhatsApp Landlord"}
                         </button>
                     </div>
 

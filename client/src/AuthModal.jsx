@@ -65,16 +65,6 @@ const AuthModal = ({ initialMode = 'login' }) => {
     }
   };
 
-  const handleGoogleAuth = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: 'http://localhost:5173/dashboard'
-      }
-    });
-    if (error) setError(error.message);
-  };
-
   return (
     <div className="bg-white/80 backdrop-blur-xl p-8 rounded-3xl shadow-2xl w-full max-w-md border border-white/20">
       <h2 className="text-3xl font-bold text-slate-900 mb-6 text-center">
@@ -99,6 +89,7 @@ const AuthModal = ({ initialMode = 'login' }) => {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+
         <button
           disabled={loading}
           className="w-full bg-indigo-600 text-white p-4 rounded-xl font-bold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200 disabled:opacity-50"
@@ -108,21 +99,6 @@ const AuthModal = ({ initialMode = 'login' }) => {
       </form>
 
       <div className="mt-6 space-y-4">
-        <div className="flex items-center my-4">
-          <div className="flex-grow border-t border-slate-200"></div>
-          <span className="px-3 text-slate-400 text-xs uppercase">Or continue with</span>
-          <div className="flex-grow border-t border-slate-200"></div>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleGoogleAuth}
-          className="w-full border border-slate-200 p-4 rounded-xl flex items-center justify-center gap-3 hover:bg-slate-50 transition font-medium"
-        >
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" alt="Google" />
-          Google
-        </button>
-
         <p className="text-center text-slate-500 text-sm">
           {isLogin ? "New to Keja Find?" : "Already have an account?"}
           <button

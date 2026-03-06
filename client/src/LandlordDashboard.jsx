@@ -2,32 +2,44 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './index.css';
 import HouseUploadModal from './HouseUploadModal';
+import PhoneUpdateModal from './PhoneUpdateModal';
 import { supabase } from './supabaseClient';
+import { AlertCircle } from 'lucide-react'; // Using an alert icon for the banner
 
 function LandlordDashboard() {
     const [houses, setHouses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
+    const [phoneNumber, setPhoneNumber] = useState(null);
 
     useEffect(() => {
         // Fetching properties from the Node server endpoint
-        const fetchLandlordHouses = async () => {
+        const fetchLandlordData = async () => {
             try {
                 const { data: { user } } = await supabase.auth.getUser();
                 if (user) {
-                    // We'll call the regular endpoint for now, but in a real app
-                    // we might want an endpoint like /api/houses/landlord/:id
-                    // For now, we filter on the client side based on landlord_id 
-                    // assuming the houses table has a landlord_id column
-                    // Or just fetch all and filter.
+
+                    // 1. Fetch Phone Number safely
+                    const { data: profileData, error: profileError } = await supabase
+                        .from('profiles')
+                        .select('phone_number')
+                        .eq('id', user.id)
+                        .maybeSingle();
+
+                    if (profileData?.phone_number) {
+                        setPhoneNumber(profileData.phone_number);
+                    } else if (profileError && profileError.code !== 'PGRST116') {
+                        console.error("Profile Fetch Error:", profileError);
+                    }
+
+                    // 2. Fetch Houses
                     axios.get('http://localhost:5000/api/houses')
                         .then((res) => {
+                            // Filter logic updated to ONLY show houses owned by this user
                             const myHouses = res.data.filter(h => h.landlord_id === user.id);
-                            if (myHouses.length > 0) {
-                                setHouses(myHouses);
-                            } else {
-                                setHouses(res.data); // Fallback if no matching ID found during this mock
-                            }
+                            // Removed the sneaky "res.data" fallback that leaked all houses
+                            setHouses(myHouses);
                             setLoading(false);
                         })
                         .catch((err) => {
@@ -40,7 +52,7 @@ function LandlordDashboard() {
             }
         };
 
-        fetchLandlordHouses();
+        fetchLandlordData();
     }, []);
 
     const handleRemove = async (houseId) => {
@@ -68,8 +80,13 @@ function LandlordDashboard() {
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4">
                 <div className="container mx-auto flex justify-between items-center px-6 md:px-12">
                     <h1 className="text-2xl font-extrabold text-indigo-600 tracking-tight">Keja Find</h1>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 md:gap-4">
                         <span className="text-gray-600 font-medium hidden md:inline">Landlord Portal</span>
+                        <button
+                            onClick={() => setIsPhoneModalOpen(true)}
+                            className="bg-green-100 hover:bg-green-200 text-green-700 font-bold py-2 px-4 rounded-full transition-all border border-green-200 text-sm md:text-base hidden sm:block">
+                            {phoneNumber ? 'Update WhatsApp' : 'Add WhatsApp'}
+                        </button>
                         <button
                             onClick={() => setIsUploadModalOpen(true)}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-5 rounded-full transition-all shadow-lg shadow-indigo-200">
@@ -78,6 +95,28 @@ function LandlordDashboard() {
                     </div>
                 </div>
             </nav>
+
+            {/* Missing Phone Number Alert Banner */}
+            {!loading && !phoneNumber && (
+                <div className="pt-24 pb-2 px-4">
+                    <div className="max-w-4xl mx-auto bg-amber-50 border border-amber-200 p-4 rounded-2xl flex items-center justify-between shadow-sm animate-in fade-in slide-in-from-top-4">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 bg-amber-100 rounded-lg text-amber-600">
+                                <AlertCircle size={20} />
+                            </div>
+                            <p className="text-amber-800 font-medium">
+                                <span className="font-bold">Missing Info:</span> Please add your WhatsApp number so students can contact you!
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsPhoneModalOpen(true)}
+                            className="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold py-2 px-4 rounded-xl transition text-sm whitespace-nowrap"
+                        >
+                            Setup Now
+                        </button>
+                    </div>
+                </div>
+            )}
 
             {/* Hero Section - Simplified for Landlords */}
             <div className="relative pt-32 pb-12 bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white">
@@ -143,6 +182,12 @@ function LandlordDashboard() {
                                 </div>
                             </div>
                         ))}
+                        {houses.length === 0 && (
+                            <div className="col-span-1 md:col-span-3 text-center py-20 bg-white rounded-3xl border border-gray-100">
+                                <h4 className="text-2xl font-bold text-gray-400 mb-2">No Properties Listed</h4>
+                                <p className="text-gray-500 mb-6">Click "List Your Keja" to upload your first house.</p>
+                            </div>
+                        )}
                     </div>
                 )}
             </main>
@@ -151,6 +196,14 @@ function LandlordDashboard() {
             <HouseUploadModal
                 isOpen={isUploadModalOpen}
                 onClose={() => setIsUploadModalOpen(false)}
+            />
+
+            {/* Phone Modal */}
+            <PhoneUpdateModal
+                isOpen={isPhoneModalOpen}
+                onClose={() => setIsPhoneModalOpen(false)}
+                currentPhone={phoneNumber}
+                onUpdateSuccess={(newPhone) => setPhoneNumber(newPhone)}
             />
         </div>
     );
