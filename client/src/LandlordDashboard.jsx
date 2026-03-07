@@ -4,7 +4,8 @@ import './index.css';
 import HouseUploadModal from './HouseUploadModal';
 import PhoneUpdateModal from './PhoneUpdateModal';
 import { supabase } from './supabaseClient';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function LandlordDashboard() {
@@ -14,6 +15,13 @@ function LandlordDashboard() {
     const [editingHouse, setEditingHouse] = useState(null); // Tracks the house being edited
     const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState(null);
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/');
+        toast.success("Logged out successfully");
+    };
 
     useEffect(() => {
         // Fetching properties from the Node server endpoint
@@ -92,7 +100,7 @@ function LandlordDashboard() {
             {/* Navbar with Glassmorphism */}
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-3 md:py-4">
                 <div className="container mx-auto flex justify-between items-center px-4 md:px-12">
-                    <h1 className="text-xl md:text-2xl font-extrabold text-indigo-600 tracking-tight">Keja Find</h1>
+                    <Link to="/" className="text-xl md:text-2xl font-extrabold text-indigo-600 tracking-tight hover:text-indigo-700 transition">Keja Find</Link>
                     <div className="flex items-center gap-2 md:gap-4 shrink-0">
                         <span className="text-gray-600 font-medium hidden lg:inline">Landlord Portal</span>
                         <button
@@ -104,6 +112,13 @@ function LandlordDashboard() {
                             onClick={openForCreate}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 md:px-5 rounded-xl md:rounded-full transition-all shadow-lg shadow-indigo-200 text-sm md:text-base hidden sm:block whitespace-nowrap">
                             List Your Keja
+                        </button>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center justify-center p-2 md:px-3 text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 transition rounded-xl"
+                            title="Log Out"
+                        >
+                            <LogOut size={20} />
                         </button>
                     </div>
                 </div>

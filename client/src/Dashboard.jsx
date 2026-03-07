@@ -8,10 +8,34 @@ function DashboardRouter() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // NEW LOGIC: Read role directly from localStorage as set by AuthModal
-    const role = localStorage.getItem('userRole') || 'student';
-    setUserRole(role);
-    setLoading(false);
+    const initializeRole = async () => {
+      // 1. Read role directly from localStorage as set by AuthModal
+      const role = localStorage.getItem('userRole') || 'student';
+      setUserRole(role);
+
+      // 2. Check if a newly Google-Auth'd user needs their Profile row created
+      const { data: { session } } = await supabase.auth.getSession();
+
+      if (session?.user) {
+        // Did they just OAuth without hitting our strict Signup code?
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('id', session.user.id)
+          .single();
+
+        // If no profile exists, they are a brand new Google Signup! Create it.
+        if (!profile) {
+          await supabase.from('profiles').insert([
+            { id: session.user.id, role: role }
+          ]);
+        }
+      }
+
+      setLoading(false);
+    };
+
+    initializeRole();
   }, []);
 
   if (loading) {

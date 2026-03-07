@@ -3,7 +3,8 @@ import axios from 'axios';
 import './index.css';
 import HouseDetailsModal from './HouseDetailsModal';
 import { supabase } from './supabaseClient';
-import { Heart } from 'lucide-react';
+import { Heart, LogOut } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 function UserDashboard() {
@@ -13,6 +14,13 @@ function UserDashboard() {
     const [user, setUser] = useState(null);
     const [savedHouseIds, setSavedHouseIds] = useState(new Set());
     const [activeTab, setActiveTab] = useState('all'); // 'all' or 'saved'
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        await supabase.auth.signOut();
+        navigate('/');
+        toast.success("Logged out successfully");
+    };
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -80,8 +88,16 @@ function UserDashboard() {
             {/* Navbar with Glassmorphism */}
             <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 py-4">
                 <div className="container mx-auto flex justify-between items-center px-6 md:px-12">
-                    <h1 className="text-2xl font-extrabold text-indigo-600 tracking-tight">Keja Find</h1>
-                    <div className="text-gray-600 font-medium">Student Dashboard</div>
+                    <Link to="/" className="text-2xl font-extrabold text-indigo-600 tracking-tight hover:text-indigo-700 transition">Keja Find</Link>
+                    <div className="flex items-center gap-4">
+                        <span className="text-gray-600 font-medium hidden sm:block">Student Dashboard</span>
+                        <button
+                            onClick={handleLogout}
+                            className="flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-700 transition bg-red-50 px-3 py-1.5 rounded-lg"
+                        >
+                            <LogOut size={16} /> Logout
+                        </button>
+                    </div>
                 </div>
             </nav>
 
