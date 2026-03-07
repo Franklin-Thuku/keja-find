@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Phone } from 'lucide-react';
 import { supabase } from './supabaseClient';
+import toast from 'react-hot-toast';
 
 const PhoneUpdateModal = ({ isOpen, onClose, currentPhone, onUpdateSuccess }) => {
     const [phone, setPhone] = useState(currentPhone || '');
@@ -26,11 +27,12 @@ const PhoneUpdateModal = ({ isOpen, onClose, currentPhone, onUpdateSuccess }) =>
 
             if (updateError) throw updateError;
 
-            alert("WhatsApp number saved successfully!");
+            toast.success("WhatsApp number saved successfully!");
             onUpdateSuccess(cleanPhone);
             onClose();
         } catch (err) {
             console.error("Failed to save phone:", err);
+            toast.error(err.message || "An unexpected error occurred.");
             setError(err.message || "An unexpected error occurred.");
         } finally {
             setLoading(false);

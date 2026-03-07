@@ -4,6 +4,7 @@ import './index.css';
 import HouseDetailsModal from './HouseDetailsModal';
 import { supabase } from './supabaseClient';
 import { Heart } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function UserDashboard() {
     const [houses, setHouses] = useState([]);
@@ -45,7 +46,7 @@ function UserDashboard() {
     const toggleSaveHouse = async (houseId, e) => {
         e.stopPropagation(); // Prevent opening modal
         if (!user) {
-            alert("Please log in to save properties.");
+            toast.error("Please log in to save properties.");
             return;
         }
 

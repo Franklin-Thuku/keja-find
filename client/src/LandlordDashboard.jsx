@@ -4,12 +4,14 @@ import './index.css';
 import HouseUploadModal from './HouseUploadModal';
 import PhoneUpdateModal from './PhoneUpdateModal';
 import { supabase } from './supabaseClient';
-import { AlertCircle } from 'lucide-react'; // Using an alert icon for the banner
+import { AlertCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function LandlordDashboard() {
     const [houses, setHouses] = useState([]);
     const [loading, setLoading] = useState(true);
     const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+    const [editingHouse, setEditingHouse] = useState(null); // Tracks the house being edited
     const [isPhoneModalOpen, setIsPhoneModalOpen] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState(null);
 
@@ -56,7 +58,8 @@ function LandlordDashboard() {
     }, []);
 
     const handleRemove = async (houseId) => {
-        if (!window.confirm("Are you sure you want to delete this property?")) return;
+        // Switch to a Toast Custom Confirmation later, but for safety in this scope we'll use a prompt
+        if (!window.confirm("Are you sure you want to delete this property? it cannot be undone.")) return;
 
         try {
             const { error } = await supabase
@@ -66,12 +69,22 @@ function LandlordDashboard() {
 
             if (error) throw error;
 
-            // Immediately update the UI without reloading
+            toast.success("Property deleted successfully.");
             setHouses((prevHouses) => prevHouses.filter((house) => house.id !== houseId));
         } catch (error) {
             console.error("Error deleting house:", error);
-            alert("Failed to delete property.");
+            toast.error("Failed to delete property.");
         }
+    };
+
+    const openForEdit = (house) => {
+        setEditingHouse(house);
+        setIsUploadModalOpen(true);
+    };
+
+    const openForCreate = () => {
+        setEditingHouse(null);
+        setIsUploadModalOpen(true);
     };
 
     return (
@@ -88,7 +101,7 @@ function LandlordDashboard() {
                             {phoneNumber ? 'Update WhatsApp' : 'Add WhatsApp'}
                         </button>
                         <button
-                            onClick={() => setIsUploadModalOpen(true)}
+                            onClick={openForCreate}
                             className="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 md:px-5 rounded-xl md:rounded-full transition-all shadow-lg shadow-indigo-200 text-sm md:text-base hidden sm:block whitespace-nowrap">
                             List Your Keja
                         </button>
@@ -133,7 +146,7 @@ function LandlordDashboard() {
                 <div className="flex justify-between items-center mb-6 md:mb-8">
                     <h3 className="text-xl md:text-2xl font-bold text-gray-800">Your Properties</h3>
                     <button
-                        onClick={() => setIsUploadModalOpen(true)}
+                        onClick={openForCreate}
                         className="md:hidden bg-indigo-100 text-indigo-700 font-bold py-2 px-4 rounded-xl text-sm whitespace-nowrap"
                     >
                         + Add New
@@ -169,7 +182,10 @@ function LandlordDashboard() {
                                         <span className="text-indigo-500">📍</span> {house.location_description || house.location}
                                     </p>
                                     <div className="flex gap-2">
-                                        <button className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-gray-700 font-semibold rounded-xl transition-colors">
+                                        <button
+                                            onClick={() => openForEdit(house)}
+                                            className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-gray-700 font-semibold rounded-xl transition-colors"
+                                        >
                                             Edit
                                         </button>
                                         <button
@@ -192,10 +208,14 @@ function LandlordDashboard() {
                 )}
             </main>
 
-            {/* Upload Modal */}
+            {/* Upload/Edit Modal */}
             <HouseUploadModal
                 isOpen={isUploadModalOpen}
-                onClose={() => setIsUploadModalOpen(false)}
+                onClose={() => {
+                    setIsUploadModalOpen(false);
+                    setEditingHouse(null);
+                }}
+                initialData={editingHouse}
             />
 
             {/* Phone Modal */}

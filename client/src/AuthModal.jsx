@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LogIn, UserPlus } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 const AuthModal = ({ initialMode = 'login' }) => {
   const [isLogin, setIsLogin] = useState(initialMode === 'login');
@@ -32,7 +33,7 @@ const AuthModal = ({ initialMode = 'login' }) => {
       : await supabase.auth.signUp({ email, password });
 
     if (authError) {
-      setError(authError.message);
+      toast.error(authError.message);
       setLoading(false);
     } else {
 
@@ -54,11 +55,11 @@ const AuthModal = ({ initialMode = 'login' }) => {
         }
       }
 
-      // Handle Redirection
       if (isLogin || data?.user?.identities?.length !== 0) {
+        toast.success("Welcome successfully!");
         navigate("/dashboard");
       } else {
-        alert("Account created! Check your email to verify before logging in.");
+        toast.success("Account created! Check your email to verify before logging in.", { duration: 5000 });
         setLoading(false);
         setIsLogin(true);
       }
@@ -111,11 +112,6 @@ const AuthModal = ({ initialMode = 'login' }) => {
         </p>
       </div>
 
-      {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-100 rounded-lg">
-          <p className="text-xs text-red-600 text-center">{error}</p>
-        </div>
-      )}
     </div>
   );
 };
